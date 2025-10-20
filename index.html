@@ -4,55 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Sweet Spot Bakery</title>
-    <!-- يمكنك هنا ربط ملف CSS الخارجي الخاص بك إذا أردت -->
-    <!-- <link rel="stylesheet" href="style.css"> -->
     <style>
-        /* تم وضع الـ CSS هنا مباشرة لسهولة الاستخدام في ملف واحد */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #FFF8F0; margin: 0; }
-        .page { display: none; }
+        body { font-family: 'Inter', sans-serif; background-color: #FFF8F0; margin: 0; color: #333; }
+        .page { display: none; padding: 20px 0; }
         .page.active { display: block; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         header { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
-        nav .logo { font-family: 'Playfair Display', serif; font-size: 24px; color: #8B5E34; cursor: pointer; }
-        nav .nav-links a { margin: 0 15px; text-decoration: none; color: #555; cursor: pointer; }
-        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+        nav .logo { font-family: 'Playfair Display', serif; font-size: 24px; color: #8B5E34; text-decoration: none; cursor: pointer; }
+        nav .nav-links { display: flex; align-items: center; }
+        nav .nav-links a { margin: 0 15px; text-decoration: none; color: #555; cursor: pointer; font-weight: 500; }
+        .auth-links { display: flex; align-items: center; gap: 10px; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background-color 0.3s ease; }
         .btn-primary { background-color: #D4A5A5; color: white; }
-        .form-container { max-width: 400px; margin: 50px auto; padding: 40px; background-color: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
-        .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .btn-primary:hover { background-color: #B48484; }
+        .form-container { max-width: 400px; margin: 50px auto; padding: 40px; background-color: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: left; }
+        .form-container h1 { font-family: 'Playfair Display', serif; color: #8B5E34; text-align: center; margin-top: 0; }
+        .form-container label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-container input, .form-container textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        .form-container input:focus, .form-container textarea:focus { outline: none; border-color: #D4A5A5; }
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; background-color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        .admin-table th { background-color: #f8f8f8; font-weight: 600; }
+        #menu-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .product-card { background-color: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.07); overflow: hidden; text-align: center; }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; }
+        .product-card h3 { margin: 15px 0 10px; color: #333; }
+        .product-card .price { color: #8B5E34; font-weight: bold; margin-bottom: 15px; }
+        .product-card .add-to-cart-btn { width: 80%; margin-bottom: 20px; }
     </style>
 </head>
 <body>
+
     <header>
-        <nav class="container">
-            <a class="logo nav-link" data-page="home">The Sweet Spot</a>
-            <div class="nav-links">
-                <a class="nav-link" data-page="menu">Menu</a>
-                <a class="nav-link" data-page="orders" id="orders-nav-link" style="display: none;">My Orders</a>
-                <a class="nav-link" data-page="admin" id="admin-nav-link" style="display: none;">Admin Panel</a>
-            </div>
-            <div id="guest-links">
-                <a class="nav-link" data-page="login">Login</a>
-                <a class="nav-link btn btn-primary" data-page="signup">Sign Up</a>
-            </div>
-            <div id="user-links" style="display: none;">
-                <span id="user-greeting"></span>
-                <a href="#" id="logout-btn">Logout</a>
-            </div>
-        </nav>
+        <div class="container">
+            <nav>
+                <a class="logo nav-link" data-page="home">The Sweet Spot</a>
+                <div class="nav-links">
+                    <a class="nav-link" data-page="home">Home</a>
+                    <a class="nav-link" data-page="menu">Menu</a>
+                    <a class="nav-link" data-page="orders" id="orders-nav-link" style="display: none;">My Orders</a>
+                    <a class="nav-link" data-page="admin" id="admin-nav-link" style="display: none;">Admin Panel</a>
+                </div>
+                <div class="auth-links">
+                    <div id="guest-links">
+                        <a class="nav-link" data-page="login">Login</a>
+                        <a class="nav-link btn btn-primary" data-page="signup">Sign Up</a>
+                    </div>
+                    <div id="user-links" style="display: none;">
+                        <span id="user-greeting"></span>
+                        <a href="#" id="logout-btn" class="nav-link">Logout</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
     </header>
 
     <main class="container">
-        <!-- هنا أقسام الصفحات المختلفة (الرئيسية، القائمة، التسجيل، إلخ) -->
-        <section id="home-page" class="page active"><h1>Welcome!</h1></section>
-        <section id="menu-page" class="page"><h1>Menu</h1><div id="menu-container"></div></section>
-        <section id="signup-page" class="page"><div class="form-container">...</div></section>
-        <section id="login-page" class="page"><div class="form-container">...</div></section>
-        <section id="orders-page" class="page"><h1>Your Orders</h1><div id="orders-container"></div></section>
+        <section id="home-page" class="page active">
+            <h1>Welcome to The Sweet Spot!</h1>
+            <p>Your one-stop shop for delicious, handcrafted baked goods, now fully online!</p>
+        </section>
+
+        <section id="menu-page" class="page">
+            <h1>Our Menu</h1>
+            <div id="menu-container">
+                <!-- Products will be loaded here by JavaScript -->
+            </div>
+        </section>
+
+        <section id="signup-page" class="page">
+            <div class="form-container">
+                <h1>Create an Account</h1>
+                <form id="signup-form">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" required>
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" required>
+                    <label for="signup-password">Password</label>
+                    <input type="password" id="signup-password" required>
+                    <label for="signup-address">Delivery Address</label>
+                    <textarea id="signup-address" rows="3" required></textarea>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <p id="signup-error" style="color: red; text-align: center;"></p>
+                </form>
+            </div>
+        </section>
+
+        <section id="login-page" class="page">
+            <div class="form-container">
+                <h1>Welcome Back!</h1>
+                <form id="login-form">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                    <button type="submit" class="btn btn-primary">Log In</button>
+                    <p id="login-error" style="color: red; text-align: center;"></p>
+                </form>
+            </div>
+        </section>
+        
+        <section id="orders-page" class="page">
+            <h1>Your Past Orders</h1>
+            <div id="orders-container"></div>
+        </section>
+
         <section id="admin-page" class="page">
              <h1>Admin Panel</h1>
+             <p>This panel shows all data from the central database.</p>
              <h2>Registered Users</h2>
              <div id="admin-users-table"></div>
              <h2>All Orders</h2>
@@ -61,83 +122,182 @@
     </main>
 
     <script>
-        // **مهم جدًا**: هذا هو عنوان الخادم الذي يعمل على جهازك.
-        const API_URL = 'http://localhost:3000';
+        // --- IMPORTANT: SET YOUR API URL ---
+        // This MUST be the public URL provided by Railway for your server.
+        const API_URL = 'https://thesweetspot-production.up.railway.app'; // <--- CHECK THIS URL!
 
+        // --- GLOBAL STATE ---
         let currentUser = JSON.parse(sessionStorage.getItem('bakery_currentUser')) || null;
+        
         const products = [
-            { id: 1, name: 'Croissant', price: 3.50 },
-            { id: 2, name: 'Eclair', price: 4.25 },
+            { id: 1, name: 'Classic Croissant', price: 3.50, image: 'https://placehold.co/400x300/F0E4D6/8B5E34?text=Croissant'},
+            { id: 2, name: 'Chocolate Eclair', price: 4.25, image: 'https://placehold.co/400x300/F0E4D6/8B5E34?text=Eclair'},
+            { id: 3, name: 'Red Velvet Cake', price: 45.00, image: 'https://placehold.co/400x300/F0E4D6/8B5E34?text=Red+Velvet'},
+            { id: 4, name: 'Iced Latte', price: 4.75, image: 'https://placehold.co/400x300/F0E4D6/8B5E34?text=Latte'},
         ];
         
-        // --- وظائف التنقل وتحديث الواجهة ---
-        function showPage(pageId) { /* ... نفس الكود السابق ... */ }
-        function updateUIForAuthState() { /* ... نفس الكود السابق مع التحقق من إيميل المدير ... */ }
+        // --- CORE FUNCTIONS ---
 
-        // --- منطق التسجيل وتسجيل الدخول (الآن يتحدث مع الخادم) ---
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            const activePage = document.getElementById(pageId + '-page');
+            if (activePage) activePage.classList.add('active');
+        }
+
+        function updateUIForAuthState() {
+            const adminNavLink = document.getElementById('admin-nav-link');
+            const ordersNavLink = document.getElementById('orders-nav-link');
+            const guestLinks = document.getElementById('guest-links');
+            const userLinks = document.getElementById('user-links');
+
+            if (currentUser) {
+                guestLinks.style.display = 'none';
+                userLinks.style.display = 'block';
+                ordersNavLink.style.display = 'inline-block';
+                document.getElementById('user-greeting').textContent = `Hi, ${currentUser.name}!`;
+
+                if (currentUser.email === 'admin@bakery.com') {
+                    adminNavLink.style.display = 'inline-block';
+                } else {
+                    adminNavLink.style.display = 'none';
+                }
+            } else {
+                guestLinks.style.display = 'block';
+                userLinks.style.display = 'none';
+                ordersNavLink.style.display = 'none';
+                adminNavLink.style.display = 'none';
+            }
+        }
+
+        // --- RENDER FUNCTIONS ---
+        
+        function renderMenu() {
+            const menuContainer = document.getElementById('menu-container');
+            if (!menuContainer) return;
+            menuContainer.innerHTML = '';
+            products.forEach(product => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h3>${product.name}</h3>
+                    <p class="price">$${product.price.toFixed(2)}</p>
+                    <button class="btn btn-primary add-to-cart-btn" data-id="${product.id}">Add to Cart</button>
+                `;
+                menuContainer.appendChild(card);
+            });
+        }
+
+        async function renderAdminPanel() {
+            const usersTableContainer = document.getElementById('admin-users-table');
+            const ordersTableContainer = document.getElementById('admin-orders-table');
+            try {
+                const response = await fetch(`${API_URL}/api/admin/data`);
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error || 'Failed to fetch');
+
+                let usersHtml = `<table class="admin-table"><tr><th>ID</th><th>Name</th><th>Email</th><th>Address</th></tr>`;
+                data.users.forEach(user => {
+                    usersHtml += `<tr><td>${user.id}</td><td>${user.name}</td><td>${user.email}</td><td>${user.address}</td></tr>`;
+                });
+                usersHtml += '</table>';
+                usersTableContainer.innerHTML = usersHtml;
+                
+                let ordersHtml = `<table class="admin-table"><tr><th>Order ID</th><th>User ID</th><th>Total</th><th>Items</th><th>Date</th></tr>`;
+                data.orders.forEach(order => {
+                    ordersHtml += `<tr><td>${order.id}</td><td>${order.userId}</td><td>$${parseFloat(order.total).toFixed(2)}</td><td>${order.items.map(i => i.name).join(', ')}</td><td>${new Date(order.createdAt).toLocaleDateString()}</td></tr>`;
+                });
+                ordersHtml += '</table>';
+                ordersTableContainer.innerHTML = ordersHtml;
+
+            } catch (error) {
+                usersTableContainer.innerHTML = `<p style="color:red;">Failed to load admin data: ${error.message}</p>`;
+            }
+        }
+        
+        // --- EVENT LISTENERS ---
+
         document.getElementById('signup-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const response = await fetch(`${API_URL}/api/signup`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ /* ... بيانات المستخدم ... */ })
-            });
-            // ... التعامل مع الرد ...
+            const name = document.getElementById('signup-name').value;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+            const address = document.getElementById('signup-address').value;
+            const errorEl = document.getElementById('signup-error');
+            errorEl.textContent = '';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, address })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error);
+                
+                alert('Account created! Please log in.');
+                showPage('login');
+                e.target.reset();
+            } catch (error) {
+                errorEl.textContent = error.message;
+            }
         });
-        
+
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const response = await fetch(`${API_URL}/api/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ /* ... بيانات الدخول ... */ })
-            });
-            const data = await response.json();
-            if (response.ok) {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('login-error');
+            errorEl.textContent = '';
+
+            try {
+                const response = await fetch(`${API_URL}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (!response.ok) throw new Error(data.error);
+                
                 currentUser = data.user;
                 sessionStorage.setItem('bakery_currentUser', JSON.stringify(currentUser));
                 updateUIForAuthState();
                 showPage('menu');
-            } // ... التعامل مع الخطأ ...
-        });
-
-        // --- **جديد**: منطق لوحة تحكم المدير ---
-        async function renderAdminPanel() {
-            const response = await fetch(`${API_URL}/api/admin/data`);
-            const data = await response.json();
-            if (response.ok) {
-                // عرض بيانات المستخدمين والطلبات في جداول
-                // ... كود لإنشاء الجداول من بيانات 'data.users' و 'data.orders'
+                e.target.reset();
+            } catch (error) {
+                errorEl.textContent = error.message;
             }
-        }
-        
-        // --- تهيئة التطبيق عند التحميل ---
-        document.addEventListener('DOMContentLoaded', () => {
-            // ... نفس كود تهيئة التطبيق السابق ...
         });
 
+        document.getElementById('logout-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            currentUser = null;
+            sessionStorage.removeItem('bakery_currentUser');
+            updateUIForAuthState();
+            showPage('home');
+        });
+        
+        // --- INITIALIZATION ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = link.dataset.page;
+                    showPage(pageId);
+                    
+                    if (pageId === 'admin') {
+                        renderAdminPanel();
+                    }
+                });
+            });
+            
+            renderMenu();
+            updateUIForAuthState();
+            showPage('home');
+        });
     </script>
 </body>
 </html>
-```
-
-### كيف تقوم بتشغيل المشروع الآن (الخطوات الصحيحة)
-
-الآن بعد أن أصبح لدينا نظام مركزي، طريقة التشغيل مختلفة قليلاً ولكنها صحيحة.
-
-1.  **ضع الملفات:** تأكد من أن الملفات الثلاثة (`index.html`, `database.js`, `server.js`) موجودة في نفس المجلد.
-2.  **افتح الترمينال (PowerShell أو CMD):** واذهب إلى مجلد مشروعك باستخدام أمر `cd`.
-3.  **تثبيت الأدوات (مرة واحدة فقط):**
-    ```bash
-    npm install express cors bcrypt sqlite3
-    ```
-4.  **إنشاء قاعدة البيانات (مرة واحدة فقط):**
-    ```bash
-    node database.js
-    ```
-5.  **تشغيل الخادم:**
-    ```bash
-    node server.js
-    
 
 
