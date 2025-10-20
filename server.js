@@ -57,21 +57,9 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+// You can add the other endpoints (orders, admin) here later.
+// Let's get it working first.
+
 app.listen(PORT, () => {
     console.log(`Server is running on port: ${PORT}`);
 });
-```
-
-#### الخطوة الثالثة والأخيرة: الدفع إلى GitHub
-
-الآن بعد أن قمت بتنظيف ملفاتك، كل ما عليك فعله هو حفظ هذه التغييرات ورفعها إلى GitHub.
-
-1.  **احفظ الملفات** التي قمت بتعديلها.
-2.  **افتح الترمينال** في مجلد مشروعك وقم بتشغيل الأوامر التالية:
-
-    ```bash
-    git add .
-    git commit -m "Fix: Clean up server files from non-code text"
-    git push
-    
-
