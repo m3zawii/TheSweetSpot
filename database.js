@@ -1,13 +1,5 @@
-/*
-    ملف إعداد قاعدة البيانات (PostgreSQL)
-    ------------------------------------
-    هذا الملف يقوم بإعداد الاتصال بقاعدة بيانات PostgreSQL التي يوفرها Railway
-    وينشئ الجداول إذا لم تكن موجودة.
-*/
 const { Pool } = require('pg');
 
-// إنشاء "pool" اتصال. سيستخدم تلقائيًا متغير DATABASE_URL
-// الذي يوفره Railway عند النشر.
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
@@ -15,12 +7,9 @@ const pool = new Pool({
     }
 });
 
-// وظيفة لإنشاء الجداول
 const createTables = async () => {
     const client = await pool.connect();
     try {
-        // نستخدم SERIAL بدلاً من INTEGER PRIMARY KEY AUTOINCREMENT
-        // ونستخدم VARCHAR بدلاً من TEXT (وهو أكثر شيوعًا في PostgreSQL)
         await client.query(`
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
@@ -30,9 +19,8 @@ const createTables = async () => {
                 address TEXT NOT NULL
             );
         `);
-        console.log("جدول 'users' جاهز.");
+        console.log("Table 'users' is ready.");
 
-        // نستخدم TEXT للبيانات الطويلة مثل JSON
         await client.query(`
             CREATE TABLE IF NOT EXISTS orders (
                 id SERIAL PRIMARY KEY,
@@ -42,18 +30,16 @@ const createTables = async () => {
                 "createdAt" TIMESTAMPTZ NOT NULL
             );
         `);
-        console.log("جدول 'orders' جاهز.");
+        console.log("Table 'orders' is ready.");
 
     } catch (err) {
-        console.error("خطأ في إنشاء الجداول:", err);
+        console.error("Error creating tables:", err);
     } finally {
         client.release();
     }
 };
 
-// تشغيل وظيفة إنشاء الجداول عند بدء تشغيل التطبيق
 createTables();
 
-// تصدير الـ pool حتى يتمكن الخادم من استخدامه لإجراء الاستعلامات
 module.exports = pool;
 
