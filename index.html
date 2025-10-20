@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sweet Spot Bakery</title>
+    <!-- يمكنك هنا ربط ملف CSS الخارجي الخاص بك إذا أردت -->
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        /* تم وضع الـ CSS هنا مباشرة لسهولة الاستخدام في ملف واحد */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #FFF8F0; margin: 0; }
+        .page { display: none; }
+        .page.active { display: block; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        nav .logo { font-family: 'Playfair Display', serif; font-size: 24px; color: #8B5E34; cursor: pointer; }
+        nav .nav-links a { margin: 0 15px; text-decoration: none; color: #555; cursor: pointer; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background-color: #D4A5A5; color: white; }
+        .form-container { max-width: 400px; margin: 50px auto; padding: 40px; background-color: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); text-align: center; }
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .admin-table th, .admin-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a class="logo nav-link" data-page="home">The Sweet Spot</a>
+            <div class="nav-links">
+                <a class="nav-link" data-page="menu">Menu</a>
+                <a class="nav-link" data-page="orders" id="orders-nav-link" style="display: none;">My Orders</a>
+                <a class="nav-link" data-page="admin" id="admin-nav-link" style="display: none;">Admin Panel</a>
+            </div>
+            <div id="guest-links">
+                <a class="nav-link" data-page="login">Login</a>
+                <a class="nav-link btn btn-primary" data-page="signup">Sign Up</a>
+            </div>
+            <div id="user-links" style="display: none;">
+                <span id="user-greeting"></span>
+                <a href="#" id="logout-btn">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <!-- هنا أقسام الصفحات المختلفة (الرئيسية، القائمة، التسجيل، إلخ) -->
+        <section id="home-page" class="page active"><h1>Welcome!</h1></section>
+        <section id="menu-page" class="page"><h1>Menu</h1><div id="menu-container"></div></section>
+        <section id="signup-page" class="page"><div class="form-container">...</div></section>
+        <section id="login-page" class="page"><div class="form-container">...</div></section>
+        <section id="orders-page" class="page"><h1>Your Orders</h1><div id="orders-container"></div></section>
+        <section id="admin-page" class="page">
+             <h1>Admin Panel</h1>
+             <h2>Registered Users</h2>
+             <div id="admin-users-table"></div>
+             <h2>All Orders</h2>
+             <div id="admin-orders-table"></div>
+        </section>
+    </main>
+
+    <script>
+        // **مهم جدًا**: هذا هو عنوان الخادم الذي يعمل على جهازك.
+        const API_URL = 'http://localhost:3000';
+
+        let currentUser = JSON.parse(sessionStorage.getItem('bakery_currentUser')) || null;
+        const products = [
+            { id: 1, name: 'Croissant', price: 3.50 },
+            { id: 2, name: 'Eclair', price: 4.25 },
+        ];
+        
+        // --- وظائف التنقل وتحديث الواجهة ---
+        function showPage(pageId) { /* ... نفس الكود السابق ... */ }
+        function updateUIForAuthState() { /* ... نفس الكود السابق مع التحقق من إيميل المدير ... */ }
+
+        // --- منطق التسجيل وتسجيل الدخول (الآن يتحدث مع الخادم) ---
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch(`${API_URL}/api/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ /* ... بيانات المستخدم ... */ })
+            });
+            // ... التعامل مع الرد ...
+        });
+        
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch(`${API_URL}/api/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ /* ... بيانات الدخول ... */ })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                currentUser = data.user;
+                sessionStorage.setItem('bakery_currentUser', JSON.stringify(currentUser));
+                updateUIForAuthState();
+                showPage('menu');
+            } // ... التعامل مع الخطأ ...
+        });
+
+        // --- **جديد**: منطق لوحة تحكم المدير ---
+        async function renderAdminPanel() {
+            const response = await fetch(`${API_URL}/api/admin/data`);
+            const data = await response.json();
+            if (response.ok) {
+                // عرض بيانات المستخدمين والطلبات في جداول
+                // ... كود لإنشاء الجداول من بيانات 'data.users' و 'data.orders'
+            }
+        }
+        
+        // --- تهيئة التطبيق عند التحميل ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // ... نفس كود تهيئة التطبيق السابق ...
+        });
+
+    </script>
+</body>
+</html>
+```
+
+### كيف تقوم بتشغيل المشروع الآن (الخطوات الصحيحة)
+
+الآن بعد أن أصبح لدينا نظام مركزي، طريقة التشغيل مختلفة قليلاً ولكنها صحيحة.
+
+1.  **ضع الملفات:** تأكد من أن الملفات الثلاثة (`index.html`, `database.js`, `server.js`) موجودة في نفس المجلد.
+2.  **افتح الترمينال (PowerShell أو CMD):** واذهب إلى مجلد مشروعك باستخدام أمر `cd`.
+3.  **تثبيت الأدوات (مرة واحدة فقط):**
+    ```bash
+    npm install express cors bcrypt sqlite3
+    ```
+4.  **إنشاء قاعدة البيانات (مرة واحدة فقط):**
+    ```bash
+    node database.js
+    ```
+5.  **تشغيل الخادم:**
+    ```bash
+    node server.js
+    
+
+
