@@ -13,7 +13,7 @@ const db = require('./database.js'); // لاستيراد اتصال قاعدة �
 
 // 2. إعداد تطبيق الخادم.
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const saltRounds = 10;
 
 // 3. Middleware (برامج وسيطة).
